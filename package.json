@@ -1,0 +1,11 @@
+{
+  "name": "pushNotifier",
+  "version": "1.0.0",
+  "description": "Send Email Notification On Push Events To All Repos In GitHub Account",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bhaskar Tiwari",
+  "license": "BSD-2-Clause"
+}
