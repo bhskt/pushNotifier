@@ -1,7 +1,19 @@
 var https=require("https"),
 	http=require("http"),
 	querystring=require("querystring"),
-	parse=require("url").parse;
+	nodemailer=require("nodemailer"),
+	parse=require("url").parse,
+	transporter=nodemailer.createTransport({
+		service:"Gmail",
+		auth:{
+			user:"<GMAIL-ID>@gmail.com",
+			pass:"<GMAIL-PASSWORD>"
+		}
+	}),
+	mailOptions={
+		from:"Bhaskar Tiwari  <bhaskartiwaridev@gmail.com>",
+		to:"bhaskartiwaridev@gmail.com",
+	};
 if(!process.argv[2] || !process.argv[3]){
 	console.log("Syntax : node[js] index.js <Port> <GitHub OAuth Token> OR node[js] index.js <Port> <User-ID> <Password>");
 	process.exit(1);
@@ -66,6 +78,17 @@ http.createServer(function(req,res){
 	}).on("end",function(){
 		res.end();
 		data=JSON.parse(querystring.parse(data).payload);
-		console.log("Triggered : "+data.commits[0].url);
+		if(data.commits){
+			console.log("Triggered : "+data.commits[0].url);
+			mailOptions.subject="pushNotifier: "+data.repository.name+" ("+data.commits[0].committer.name+")";
+			mailOptions.text=JSON.stringify(data.commits[0]);
+			transporter.sendMail(mailOptions,function(err,msg){
+				if(err){
+					console.log("Error : "+err);
+				} else {
+					console.log("Email Sent : "+mailOptions.to);
+				}
+			});
+		}
 	});
 }).listen(process.argv[2]);
